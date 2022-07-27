@@ -38,7 +38,6 @@ class CheckCallableTraitTest extends TestCase
 
     /**
      * Test check callable.
-     *
      * @throws Exception
      */
     public function testCheckCallable(): void
@@ -48,7 +47,7 @@ class CheckCallableTraitTest extends TestCase
 
             return $parameter->allowsNull() === true && $type !== null && $type->getName() === 'int';
         };
-        $parameters    = [
+        $parameters = [
             'string',
             null,
             'array',
@@ -66,17 +65,17 @@ class CheckCallableTraitTest extends TestCase
         $lessRequirements = array_slice($parameters, 0, count($parameters) - 1);
         $this->assertFalse($this->checkPublicStaticCallable([self::class, 'method1'], $lessRequirements));
 
-        // however if method do not want to use all the parameters we send it should pass
+        // however, if method do not want to use all the parameters we send it should pass
         $moreRequirements = array_merge($parameters, [$isNullableInt]);
         $this->assertTrue($this->checkPublicStaticCallable([self::class, 'method1'], $moreRequirements));
 
         // make sure it works for method without parameters and return type
         $this->assertTrue($this->checkPublicStaticCallable([self::class, 'method2']));
 
-        // if we pass non public callable it should fail
+        // if we pass non-public callable it should fail
         $this->assertFalse($this->checkPublicStaticCallable([self::class, 'method3']));
 
-        // if we pass non static callable it should fail
+        // if we pass non-static callable it should fail
         $this->assertFalse($this->checkPublicStaticCallable([self::class, 'method4']));
 
         // if we pass Closure it should fail
@@ -115,7 +114,7 @@ class CheckCallableTraitTest extends TestCase
         $this->assertFalse($this->checkPublicStaticCallable([self::class, 'method1'], $nonMatchingParameters));
 
         // if parameter closure return `false` it should fail
-        $retFalseClosure       = function (): bool {
+        $retFalseClosure = function (): bool {
             return false;
         };
         $nonMatchingParameters = [
@@ -148,12 +147,11 @@ class CheckCallableTraitTest extends TestCase
     }
 
     /**
-     * @param string            $param1
-     * @param mixed             $param2
-     * @param array             $param3
+     * @param string $param1
+     * @param mixed $param2
+     * @param array $param3
      * @param DateTimeInterface $param4
-     * @param int|null          $param5
-     *
+     * @param int|null $param5
      * @return bool
      */
     public static function method1(
@@ -162,8 +160,7 @@ class CheckCallableTraitTest extends TestCase
         array $param3,
         DateTimeInterface $param4,
         int $param5 = null
-    ): bool
-    {
+    ): bool {
         assert($param1 || $param2 || $param3 || $param4 || $param5);
 
         return true;

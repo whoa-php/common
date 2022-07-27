@@ -39,7 +39,6 @@ class ClassIsTraitTest extends TestCase
 
     /**
      * Test class selections.
-     *
      * @throws Exception
      */
     public function testClassMethods(): void
@@ -120,7 +119,6 @@ class ClassIsTraitTest extends TestCase
 
     /**
      * @param iterable $values
-     *
      * @return array
      */
     private function iterableToArray(iterable $values): array

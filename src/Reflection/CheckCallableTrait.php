@@ -25,6 +25,7 @@ use Closure;
 use InvalidArgumentException;
 use ReflectionException;
 use ReflectionMethod;
+
 use function count;
 use function explode;
 use function is_array;
@@ -39,29 +40,20 @@ trait CheckCallableTrait
 {
     /**
      * Checks input callable is public static function with parameters and return type as specified.
-     *
-     * @param mixed       $callable
-     * @param array       $parameters
+     * @param mixed $callable
+     * @param array $parameters
      * @param string|null $returnType
-     *
      * @return bool
-     *
      * @throws ReflectionException
-     *
-     * @SuppressWarnings(PHPMD.ElseExpression)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.IfStatementAssignment)
      */
     protected function checkPublicStaticCallable(
         $callable,
         array $parameters = [],
         string $returnType = null
-    ): bool
-    {
+    ): bool {
         /** @var callable|array|string $callable */
 
-        // first of all check input is callable (class, method) in form of array or string...
+        // first check input is callable (class, method) in form of array or string...
         if (is_callable($callable) && is_string($callable) === true && strpos($callable, '::') !== false) {
             [$class, $method] = explode('::', $callable, 2);
         } elseif (is_callable($callable) &&
@@ -89,14 +81,14 @@ trait CheckCallableTrait
             return false;
         }
 
-        $index          = 0;
+        $index = 0;
         $areAllParamsOk = true;
         foreach ($parameters as $parameter) {
             if ($index >= count($methodParams)) {
                 continue;
             }
 
-            $isParamOk   = true;
+            $isParamOk = true;
             $methodParam = $methodParams[$index];
             if (is_string($parameter) === true) {
                 $methodType = $methodParam->getType();
@@ -127,7 +119,7 @@ trait CheckCallableTrait
         // ... and return type
         $isReturnTypeOk = true;
         if ($areAllParamsOk === true && $returnType !== null) {
-            $methodRetType  = $reflectionMethod->getReturnType();
+            $methodRetType = $reflectionMethod->getReturnType();
             $isReturnTypeOk = ($methodRetType !== null) && ($methodRetType->getName() === $returnType);
         }
 

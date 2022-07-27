@@ -22,9 +22,11 @@ declare(strict_types=1);
 namespace Whoa\Common\Reflection;
 
 use Exception;
+use FilesystemIterator;
 use GlobIterator;
 use ReflectionClass;
 use ReflectionException;
+
 use function assert;
 use function array_key_exists;
 use function class_exists;
@@ -44,7 +46,6 @@ trait ClassIsTrait
     /**
      * @param string $class
      * @param string $interface
-     *
      * @return bool
      */
     protected static function classImplements(string $class, string $interface): bool
@@ -52,15 +53,12 @@ trait ClassIsTrait
         assert(class_exists($class));
         assert(interface_exists($interface));
 
-        $implements = array_key_exists($interface, class_implements($class));
-
-        return $implements;
+        return array_key_exists($interface, class_implements($class));
     }
 
     /**
      * @param string $class
      * @param string $parentClass
-     *
      * @return bool
      */
     protected static function classExtends(string $class, string $parentClass): bool
@@ -68,15 +66,12 @@ trait ClassIsTrait
         assert(class_exists($class));
         assert(class_exists($parentClass));
 
-        $isParent = array_key_exists($parentClass, class_parents($class));
-
-        return $isParent;
+        return array_key_exists($parentClass, class_parents($class));
     }
 
     /**
      * @param string $class
      * @param string $classOrInterface
-     *
      * @return bool
      */
     protected static function classInherits(string $class, string $classOrInterface): bool
@@ -84,15 +79,12 @@ trait ClassIsTrait
         assert(class_exists($class));
         assert(class_exists($classOrInterface) || interface_exists($classOrInterface));
 
-        $isSubclass = is_subclass_of($class, $classOrInterface);
-
-        return $isSubclass;
+        return is_subclass_of($class, $classOrInterface);
     }
 
     /**
      * @param string[] $classes
-     * @param string   $interface
-     *
+     * @param string $interface
      * @return iterable
      */
     protected static function selectClassImplements(array $classes, string $interface): iterable
@@ -106,8 +98,7 @@ trait ClassIsTrait
 
     /**
      * @param string[] $classes
-     * @param string   $parentClass
-     *
+     * @param string $parentClass
      * @return iterable
      */
     protected static function selectClassExtends(array $classes, string $parentClass): iterable
@@ -121,8 +112,7 @@ trait ClassIsTrait
 
     /**
      * @param string[] $classes
-     * @param string   $classOrInterface
-     *
+     * @param string $classOrInterface
      * @return iterable
      */
     protected static function selectClassInherits(array $classes, string $classOrInterface): iterable
@@ -136,34 +126,27 @@ trait ClassIsTrait
 
     /**
      * Reads file(s) by specified path mask and select only those which implement given class or interface.
-     *
      * @param string $path
      * @param string $classOrInterface
-     *
      * @return iterable
-     *
      * @throws ReflectionException
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.IfStatementAssignment)
      */
     protected static function selectClasses(string $path, string $classOrInterface): iterable
     {
         $selectedFiles = [];
 
-        $flags = GlobIterator::SKIP_DOTS | GlobIterator::CURRENT_AS_PATHNAME;
+        $flags = FilesystemIterator::SKIP_DOTS | FilesystemIterator::CURRENT_AS_PATHNAME;
         foreach (new GlobIterator($path, $flags) as $filePath) {
             if (is_file($filePath) === true) {
                 $filePath = realpath($filePath);
 
-                $obLevel  = ob_get_level();
+                $obLevel = ob_get_level();
                 $obLength = ob_get_length();
 
                 try {
-                    /** @noinspection PhpIncludeInspection */
                     require_once $filePath;
                 } catch (Exception $ex) {
-                    // Files might have syntax errors and etc.
+                    // Files might have syntax errors etc.
                     // For the purposes of this method it doesn't matter so just skip it.
                     continue;
                 }

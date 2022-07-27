@@ -23,5 +23,4 @@ namespace Whoa\Tests\Common\Reflection;
 
 // This file is used for testing how the code deals with incorrect PHP files.
 
-/** @noinspection PhpIncludeInspection */
 include_once 'non_existing_file.php';
